@@ -32,6 +32,7 @@ public class DetailOrderActicity extends AppCompatActivity {
     private TextView txtDateCreate;
     private TextView txtPayment;
     private TextView txtDelivered;
+    private TextView txtDiscount;
     private TextView txtID;
     private TextView txtName_phone;
     private TextView txtAddress;
@@ -90,6 +91,12 @@ public class DetailOrderActicity extends AppCompatActivity {
         }else {
             txtDelivered.setText("Chưa giao hàng");
         }
+
+        if((orders.getItemsPrice() + orders.getShippingPrice()) == orders.getTotalPrice()){
+            txtDiscount.setText("Không có áp dụng mã giảm giá");
+        }else {
+            txtDiscount.setText("Có áp dụng mã giảm giá");
+        }
     }
 
     private void initView(){
@@ -101,6 +108,7 @@ public class DetailOrderActicity extends AppCompatActivity {
         txtDateCreate = findViewById(R.id.txtDateCreate);
         txtPayment = findViewById(R.id.txtPayment);
         txtDelivered = findViewById(R.id.txtDelivered);
+        txtDiscount = findViewById(R.id.txtDiscount);
         txtName_phone = findViewById(R.id.txtName_phone);
         txtAddress = findViewById(R.id.txtAddress);
         txtID = findViewById(R.id.txtId);

@@ -1,7 +1,9 @@
 package com.example.shopproject.presenter.callbackMode;
 
+import com.example.shopproject.mode.Discount;
 import com.example.shopproject.mode.FavoriteResponse;
 import com.example.shopproject.mode.Items;
+import com.example.shopproject.mode.MessagResponse;
 import com.example.shopproject.mode.Orders;
 import com.example.shopproject.mode.Photo;
 import com.example.shopproject.mode.Product;
@@ -10,6 +12,7 @@ import com.example.shopproject.mode.SearchResponse;
 import com.example.shopproject.mode.orderResponse;
 import com.example.shopproject.mode.reviewResponse;
 
+import java.io.DataInput;
 import java.util.List;
 
 public interface CallbackProductMode {
@@ -28,4 +31,7 @@ public interface CallbackProductMode {
     default void reviewSuccess(reviewResponse reviewResponse){};
     default void getListOrdersHistorySuccess(List<Orders> mList){};
     default void postFavoriteProductSuccess(FavoriteResponse response){};
+
+    default void getListDiscountSuccess(List<Discount> mList){};
+    default void deleteOrdersSuccess(MessagResponse messagResponse){};
 }

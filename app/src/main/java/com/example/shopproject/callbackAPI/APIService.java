@@ -1,8 +1,10 @@
 package com.example.shopproject.callbackAPI;
 
+import com.example.shopproject.mode.Discount;
 import com.example.shopproject.mode.FavoriteRequest;
 import com.example.shopproject.mode.FavoriteResponse;
 import com.example.shopproject.mode.LoginRequest;
+import com.example.shopproject.mode.MessagResponse;
 import com.example.shopproject.mode.OrderRequest;
 import com.example.shopproject.mode.Orders;
 import com.example.shopproject.mode.Product;
@@ -25,6 +27,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -57,6 +60,10 @@ public interface APIService {
             .retryOnConnectionFailure(true)
 //            .addInterceptor(interceptor)
             .addInterceptor(loggingInterceptor);
+
+    ////10.13.130.186:5000
+    ////192.168.1.161:5000
+    ////10.194.29.192:5000
 
     APIService apiService = new Retrofit.Builder()
             .baseUrl("http://192.168.1.161:5000/")
@@ -110,6 +117,12 @@ public interface APIService {
 
     @POST("/api/users/favorite/")
     Call<FavoriteResponse> postFavariteProduct(@Header("authorization") String header, @Body FavoriteRequest favoriteResponse);
+
+    @GET("/api/discount/")
+    Call<List<Discount>> getListDiscount();
+
+    @DELETE("/api/orders/{id}")
+    Call<MessagResponse> deleteOrders(@Path("id") String id);
 
 }
 

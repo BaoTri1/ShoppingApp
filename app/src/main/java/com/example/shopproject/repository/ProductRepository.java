@@ -23,4 +23,8 @@ public interface ProductRepository {
     void PostReview(String comment, int rating, String name, String id);
     void getListOrdersHistory();
     void postFavoriteProduct(String id, String idProduct);
+
+    void getListDiscount();
+
+    void deleteOrders(String id);
 }

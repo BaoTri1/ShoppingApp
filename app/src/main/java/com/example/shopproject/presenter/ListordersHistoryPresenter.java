@@ -2,6 +2,7 @@ package com.example.shopproject.presenter;
 
 import android.content.Context;
 
+import com.example.shopproject.mode.MessagResponse;
 import com.example.shopproject.mode.Orders;
 import com.example.shopproject.orther_handle.Publics;
 import com.example.shopproject.presenter.callbackMode.CallbackProductMode;
@@ -15,6 +16,7 @@ public class ListordersHistoryPresenter implements CallbackProductMode {
     private Context mContext;
     private ListordersHistoryView listordersHistoryView;
     private ProductInterator productInterator;
+    private List<Orders> mList;
 
     public ListordersHistoryPresenter(Context mContext, ListordersHistoryView listordersHistoryView) {
         this.mContext = mContext;
@@ -30,6 +32,17 @@ public class ListordersHistoryPresenter implements CallbackProductMode {
         }
     }
 
+    public void deleteOrders(Orders orders){
+        mList.remove(orders);
+        listordersHistoryView.DislayListOrders(this.mList);
+        productInterator.deleteOrders(orders.get_id());
+    }
+
+    @Override
+    public void deleteOrdersSuccess(MessagResponse messagResponse) {
+        listordersHistoryView.DislayMessageDeleteOrders(messagResponse.getMessage());
+    }
+
     @Override
     public void getDataFailure(String message) {
         listordersHistoryView.DisplayError(message);
@@ -37,6 +50,7 @@ public class ListordersHistoryPresenter implements CallbackProductMode {
 
     @Override
     public void getListOrdersHistorySuccess(List<Orders> mList) {
+        this.mList = mList;
         listordersHistoryView.DislayListOrders(mList);
     }
 }

@@ -70,8 +70,22 @@ public class orderHistoryAdapter extends RecyclerView.Adapter<orderHistoryAdapte
             holder.txtPayment.setText("Đã thanh toán bằng thẻ tín dụng");
         }
 
+        if((orders.getItemsPrice() + orders.getShippingPrice()) == orders.getTotalPrice()){
+            holder.txtDiscount.setText("Không có áp dụng mã giảm giá");
+        }else {
+            holder.txtDiscount.setText("Có áp dụng mã giảm giá");
+        }
+
         holder.btnDetail.setOnClickListener(v -> {
             listener.onClickDetailOrders(orders);
+        });
+
+        if(orders.isDelivered()){
+            holder.btnDelete.setVisibility(View.GONE);
+        }
+
+        holder.btnDelete.setOnClickListener(v -> {
+            listener.onClickDeleteOrders(orders);
         });
     }
 
@@ -88,8 +102,10 @@ public class orderHistoryAdapter extends RecyclerView.Adapter<orderHistoryAdapte
         private RecyclerView rcv_item;
         private TextView txtToltalBill;
         private TextView txtDelivered;
+        private TextView txtDiscount;
         private TextView txtPayment;
         private AppCompatButton btnDetail;
+        private AppCompatButton btnDelete;
 
         public orderHistoryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -97,8 +113,10 @@ public class orderHistoryAdapter extends RecyclerView.Adapter<orderHistoryAdapte
             rcv_item = itemView.findViewById(R.id.rcv_item);
             txtToltalBill = itemView.findViewById(R.id.txtToltalBill);
             txtDelivered = itemView.findViewById(R.id.txtDelivered);
+            txtDiscount = itemView.findViewById(R.id.txtDiscount);
             txtPayment = itemView.findViewById(R.id.txtPayment);
             btnDetail = itemView.findViewById(R.id.btnDetail);
+            btnDelete = itemView.findViewById(R.id.btnDeleteOrders);
         }
     }
 }

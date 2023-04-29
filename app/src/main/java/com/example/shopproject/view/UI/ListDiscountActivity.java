@@ -20,36 +20,37 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.shopproject.R;
-import com.example.shopproject.mode.Orders;
-import com.example.shopproject.presenter.ListordersHistoryPresenter;
-import com.example.shopproject.view.ListordersHistoryView;
-import com.example.shopproject.view.adapter.AddressAdapter;
+import com.example.shopproject.mode.Discount;
+import com.example.shopproject.presenter.ListDiscountPresenter;
+import com.example.shopproject.view.ListDiscountView;
+import com.example.shopproject.view.adapter.DiscountAdapter;
 import com.example.shopproject.view.adapter.interfaceListenerAdapter.clickListener;
 import com.example.shopproject.view.adapter.orderHistoryAdapter;
 
 import java.util.List;
 
-public class ListOrdersHistory extends AppCompatActivity implements ListordersHistoryView, SwipeRefreshLayout.OnRefreshListener {
+public class ListDiscountActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, ListDiscountView {
 
+    private static final String DISCOUNT_KEY = "discount_key";
     private SwipeRefreshLayout swipeRefreshLayout;
     private Toolbar toolbar;
-    private RecyclerView rcv_ordersHistory;
+    private RecyclerView rcvDiscount;
     private TextView lblMemo;
-    private orderHistoryAdapter adapter;
+    private DiscountAdapter adapter;
 
-    private ListordersHistoryPresenter listordersHistoryPresenter;
+    private ListDiscountPresenter listDiscountPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_orders_history_layout);
+        setContentView(R.layout.activity_list_discount_layout);
 
         initView();
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Lịch sử mua hàng");
+        actionBar.setTitle("Danh sách mã giảm giá");
 
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.color_gia));
@@ -66,15 +67,15 @@ public class ListOrdersHistory extends AppCompatActivity implements ListordersHi
             });
         }
 
-        listordersHistoryPresenter = new ListordersHistoryPresenter(this, this);
-        listordersHistoryPresenter.getListOrderHistory();
+        listDiscountPresenter = new ListDiscountPresenter(this, this);
+        listDiscountPresenter.getListDiscount();
     }
 
     private void initView(){
-        swipeRefreshLayout = findViewById(R.id.SwipeRefreshLayout_orderHistory);
-        toolbar = findViewById(R.id.ToolBar_orderHistory);
-        rcv_ordersHistory = findViewById(R.id.rcv_orderHistory);
-        lblMemo = findViewById(R.id.lblmemo_orderHistory);
+        swipeRefreshLayout = findViewById(R.id.SwipeRefreshLayout_discount);
+        toolbar = findViewById(R.id.ToolBar_discount);
+        rcvDiscount = findViewById(R.id.rcv_discount);
+        lblMemo = findViewById(R.id.lblmemo_discount);
     }
 
     @Override
@@ -89,62 +90,46 @@ public class ListOrdersHistory extends AppCompatActivity implements ListordersHi
     }
 
     @Override
-    public void DislayListOrders(List<Orders> mList) {
-        if(mList == null || mList.isEmpty()){
-            rcv_ordersHistory.setVisibility(View.GONE);
-            lblMemo.setVisibility(View.VISIBLE);
-            return;
-        }
-        rcv_ordersHistory.setVisibility(View.VISIBLE);
-        lblMemo.setVisibility(View.GONE);
-        if(adapter == null){
-            adapter = new orderHistoryAdapter(this, mList, new clickListener() {
-                @Override
-                public void onClickDetailOrders(Orders orders) {
-                    String namePaymentMethod = "";
-                    if(!orders.getPaymentMethod().equals("Thanh toán khi nhận hàng")){
-                        namePaymentMethod = "Thanh toán bằng thẻ tín dụng";
-                    }else {
-                        namePaymentMethod = "Thanh toán khi nhận hàng";
-                    }
-                    Intent intent = new Intent(ListOrdersHistory.this, DetailOrderActicity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("PAYMENT_METHOD", namePaymentMethod);
-                    bundle.putString("TYPE_RECEIVE_KEY", "ORDERS_DETAIL");
-                    bundle.putSerializable("ORDERS", orders);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onClickDeleteOrders(Orders orders) {
-                    listordersHistoryPresenter.deleteOrders(orders);
-                }
-            });
-            rcv_ordersHistory.setAdapter(adapter);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-            rcv_ordersHistory.setLayoutManager(layoutManager);
-            rcv_ordersHistory.addItemDecoration(new DividerItemDecoration(this, RecyclerView.VERTICAL));
-        }else {
-            adapter.setData(mList);
-        }
-    }
-
-    @Override
-    public void DislayMessageDeleteOrders(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Thông báo");
-        builder.setMessage(message);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
+    public void onRefresh() {
+        listDiscountPresenter.getListDiscount();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                dialog.dismiss();
+                swipeRefreshLayout.setRefreshing(false);
             }
-        }, 1500);
+        }, 1000);
+    }
+
+    @Override
+    public void DislayListOrders(List<Discount> mList) {
+        if(mList == null || mList.isEmpty()){
+            rcvDiscount.setVisibility(View.GONE);
+            lblMemo.setVisibility(View.VISIBLE);
+            return;
+        }
+        rcvDiscount.setVisibility(View.VISIBLE);
+        lblMemo.setVisibility(View.GONE);
+        if(adapter == null){
+            adapter = new DiscountAdapter(this, mList, new clickListener() {
+                @Override
+                public void onClickDiscount(Discount discount) {
+                    Intent intent = new Intent(ListDiscountActivity.this, PayMentActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(DISCOUNT_KEY, discount);
+                    intent.putExtras(bundle);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            });
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+            rcvDiscount.setLayoutManager(layoutManager);
+            rcvDiscount.addItemDecoration(new DividerItemDecoration(this, RecyclerView.VERTICAL));
+            rcvDiscount.setAdapter(adapter);
+
+        }else {
+            adapter.setData(mList);
+        }
     }
 
     @Override
@@ -159,17 +144,5 @@ public class ListOrdersHistory extends AppCompatActivity implements ListordersHi
         });
         dialogNetWork.setMessage(error);
         dialogNetWork.create().show();
-    }
-
-    @Override
-    public void onRefresh() {
-        listordersHistoryPresenter.getListOrderHistory();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }, 1000);
     }
 }
